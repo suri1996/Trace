@@ -1,4 +1,30 @@
-﻿getopt.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+﻿  main.cpp
+  RayTracer.cpp
+c:\users\ssuri\documents\github\trace\src\fileio\parse.h(180): warning C4018: '<': signed/unsigned mismatch
+  TraceGLWindow.cpp
+  TraceUI.cpp
+c:\users\ssuri\documents\github\trace\src\ui\traceui.cpp(34): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\users\ssuri\documents\github\trace\src\ui\traceui.cpp(37): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\users\ssuri\documents\github\trace\src\ui\traceui.cpp(160): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+  read.cpp
+c:\users\ssuri\documents\github\trace\src\fileio\parse.h(180): warning C4018: '<': signed/unsigned mismatch
+  light.cpp
+  material.cpp
+  ray.cpp
+  scene.cpp
+  Box.cpp
+  Cone.cpp
+  Cylinder.cpp
+  Sphere.cpp
+  Square.cpp
+  trimesh.cpp
+c:\users\ssuri\documents\github\trace\src\sceneobjects\trimesh.cpp(91): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\ssuri\documents\github\trace\src\sceneobjects\trimesh.cpp(102): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+getopt.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
 fltkd.lib(case.obj) : warning LNK4099: PDB 'fltk.pdb' was not found with 'fltkd.lib(case.obj)' or at 'C:\Users\ssuri\Documents\GitHub\Trace\Debug\fltk.pdb'; linking object as if no debug info
 fltkd.lib(filename_absolute.obj) : warning LNK4099: PDB 'fltk.pdb' was not found with 'fltkd.lib(filename_absolute.obj)' or at 'C:\Users\ssuri\Documents\GitHub\Trace\Debug\fltk.pdb'; linking object as if no debug info
 fltkd.lib(filename_expand.obj) : warning LNK4099: PDB 'fltk.pdb' was not found with 'fltkd.lib(filename_expand.obj)' or at 'C:\Users\ssuri\Documents\GitHub\Trace\Debug\fltk.pdb'; linking object as if no debug info

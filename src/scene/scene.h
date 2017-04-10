@@ -212,10 +212,15 @@ class SceneObject
 public:
 	virtual const Material& getMaterial() const = 0;
 	virtual void setMaterial( Material *m ) = 0;
+	virtual bool hasInterior() const = 0;
+	virtual void setOrder(int ord) { order = ord; }
+	virtual int getOrder() const = 0;
 
 protected:
 	SceneObject( Scene *scene )
 		: Geometry( scene ) {}
+	int order;
+
 };
 
 // A simple extension of SceneObject that adds an instance of Material
@@ -234,8 +239,13 @@ protected:
 		: SceneObject( scene ), material( mat ) {}
     //	MaterialSceneObject( Scene *scene ) 
 	//	: SceneObject( scene ), material( new Material ) {}
+	virtual bool hasInterior() const { return true; }
+	virtual void setOrder(int ord) { order = ord; }
+	virtual int getOrder() const { return order; }
+
 
 	Material *material;
+	int order;
 };
 
 class Scene
@@ -274,6 +284,11 @@ public:
 		AmbientLight.clamp();
 	}
 
+	void giveOrder(SceneObject* obj) {
+		obj->setOrder(++currentOrder);
+	}
+
+
 
 	list<Light*>::const_iterator beginLights() const { return lights.begin(); }
 	list<Light*>::const_iterator endLights() const { return lights.end(); }
@@ -283,6 +298,7 @@ public:
 	
 
 private:
+	int currentOrder;
     list<Geometry*> objects;
 	list<Geometry*> nonboundedobjects;
 	list<Geometry*> boundedobjects;
