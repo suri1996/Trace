@@ -13,7 +13,19 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
-    return vec3f(1,1,1);
+	vec3f direction = getDirection(P);
+
+	vec3f Pruc = P;
+	isect Psect;
+	vec3f atten = getColor(P);
+	ray r = ray(Pruc, direction);
+	while (scene->intersect(r, Psect)) {
+		if (Psect.getMaterial().kt.iszero()) return vec3f(0, 0, 0);
+		Pruc = r.at(Psect.t);
+		r = ray(Pruc, direction);
+		atten = prod(atten, Psect.getMaterial().kt);
+	}
+	return atten;
 }
 
 vec3f DirectionalLight::getColor( const vec3f& P ) const
@@ -54,4 +66,26 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
     return vec3f(1,1,1);
+}
+
+void PointLight::distanceAttenuationCoeff(const double c, const double l, const double q) {
+	c_a_c = c;
+	l_a_c = l;
+	q_a_c = q;
+}
+
+double AmbientLight::distanceAttenuation(const vec3f& P) const {
+	return 1.0;
+}
+
+vec3f AmbientLight::getColor(const vec3f& P) const{
+	return color;
+}
+
+vec3f AmbientLight::getDirection(const vec3f& P) const {
+	return vec3f(1, 1, 1);
+}
+
+vec3f AmbientLight::shadowAttenuation(const vec3f& P) const {
+	return vec3f(1, 1, 1);
 }
