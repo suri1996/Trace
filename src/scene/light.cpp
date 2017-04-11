@@ -1,6 +1,9 @@
 #include <cmath>
 
 #include "light.h"
+#include "../ui/TraceUI.h"
+
+extern TraceUI* traceUI;
 
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 {
@@ -42,9 +45,9 @@ vec3f DirectionalLight::getDirection( const vec3f& P ) const
 PointLight::PointLight(Scene *scene, const vec3f& pos, const vec3f& color)
 : Light(scene, color),
  	position(pos),
- 	c_a_c(0.0),
- 	l_a_c(0.0),
- 	q_a_c(0.0)
+ 	c_a_c(traceUI->getConstantAttenuation()),
+ 	l_a_c(traceUI->getLinearAttenuation()),
+ 	q_a_c(traceUI->getQuadraticAttenuation())
 {}
 
 

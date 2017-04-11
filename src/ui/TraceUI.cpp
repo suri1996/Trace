@@ -92,6 +92,21 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nDepth=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void TraceUI::cb_caSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nConstantAttenuation = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_laSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nLinearAttenuation = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_qaSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nQuadraticAttenuation = int(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -195,6 +210,18 @@ int TraceUI::getDepth()
 	return m_nDepth;
 }
 
+double TraceUI::getConstantAttenuation() {
+	return m_nConstantAttenuation;
+}
+
+double TraceUI::getLinearAttenuation() {
+	return m_nLinearAttenuation;
+}
+
+double TraceUI::getQuadraticAttenuation() {
+	return m_nQuadraticAttenuation;
+}
+
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -214,7 +241,10 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_mainWindow = new Fl_Window(100, 40, 320, 100, "Ray <Not Loaded>");
+	m_nConstantAttenuation = 0.5;
+	m_nLinearAttenuation = 0.5;
+	m_nQuadraticAttenuation = 0.5;
+	m_mainWindow = new Fl_Window(100, 40, 320, 300, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 320, 25);
@@ -245,6 +275,45 @@ TraceUI::TraceUI() {
 		m_sizeSlider->value(m_nSize);
 		m_sizeSlider->align(FL_ALIGN_RIGHT);
 		m_sizeSlider->callback(cb_sizeSlides);
+
+		// install constant attenuation size
+		m_constantAttenuation = new Fl_Value_Slider(10, 80, 180, 20, "Constant Attenuation Coeff");
+		m_constantAttenuation->user_data((void*)(this));	// record self to be used by static callback functions
+		m_constantAttenuation->type(FL_HOR_NICE_SLIDER);
+		m_constantAttenuation->labelfont(FL_COURIER);
+		m_constantAttenuation->labelsize(12);
+		m_constantAttenuation->minimum(0);
+		m_constantAttenuation->maximum(1);
+		m_constantAttenuation->step(0.1);
+		m_constantAttenuation->value(m_nConstantAttenuation);
+		m_constantAttenuation->align(FL_ALIGN_RIGHT);
+		m_constantAttenuation->callback(cb_caSlides);
+
+		// install linear attenuation size
+		m_linearAttenuation = new Fl_Value_Slider(10, 105, 180, 20, "Linear Attenuation Coeff");
+		m_linearAttenuation->user_data((void*)(this));	// record self to be used by static callback functions
+		m_linearAttenuation->type(FL_HOR_NICE_SLIDER);
+		m_linearAttenuation->labelfont(FL_COURIER);
+		m_linearAttenuation->labelsize(12);
+		m_linearAttenuation->minimum(0);
+		m_linearAttenuation->maximum(1);
+		m_linearAttenuation->step(0.1);
+		m_linearAttenuation->value(m_nLinearAttenuation);
+		m_linearAttenuation->align(FL_ALIGN_RIGHT);
+		m_linearAttenuation->callback(cb_laSlides);
+
+		// install constant attenuation size
+		m_quadraticAttenuation = new Fl_Value_Slider(10, 130, 180, 20, "Quadratic Attenuation Coeff");
+		m_quadraticAttenuation->user_data((void*)(this));	// record self to be used by static callback functions
+		m_quadraticAttenuation->type(FL_HOR_NICE_SLIDER);
+		m_quadraticAttenuation->labelfont(FL_COURIER);
+		m_quadraticAttenuation->labelsize(12);
+		m_quadraticAttenuation->minimum(0);
+		m_quadraticAttenuation->maximum(1);
+		m_quadraticAttenuation->step(0.1);
+		m_quadraticAttenuation->value(m_nQuadraticAttenuation);
+		m_quadraticAttenuation->align(FL_ALIGN_RIGHT);
+		m_quadraticAttenuation->callback(cb_qaSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));

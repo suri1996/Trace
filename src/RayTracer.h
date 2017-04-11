@@ -32,7 +32,7 @@ private:
 	int buffer_width, buffer_height;
 	int bufferSize;
 	Scene *scene;
-	std::map<int, Material> mediaHistory;
+	std::map<int, Material> indexstack;
 
 	bool m_bSceneLoaded;
 };

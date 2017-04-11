@@ -20,7 +20,7 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	mediaHistory.clear();
+	indexstack.clear();
 	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();
 }
 
@@ -47,20 +47,17 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		shade += m.shade(scene, r, i);
 		if (depth >= traceUI->getDepth())
 			return shade;
-		vec3f conPoint = r.at(i.t);
-		vec3f normal;
-		vec3f Rdir = 2 * (i.N*-r.getDirection()) * i.N - (-r.getDirection());
-		ray R = ray(conPoint, Rdir);
+		vec3f cp = r.at(i.t);
+		vec3f n;
+		vec3f dirR = 2 * (i.N*-r.getDirection()) * i.N - (-r.getDirection());
+		ray R = ray(cp, dirR);
 		if (!i.getMaterial().kr.iszero()) {
 			shade += prod(i.getMaterial().kr, traceRay(scene, R, thresh, depth + 1));
 		}
-		// Refraction part 
-		// We maintain a map, this map has order so it can be simulated as a extended stack	 
-		if (!i.getMaterial().kt.iszero()) {
-			// take account total refraction effect 
-			bool TotalRefraction = false;
-			// opposite ray 
-			ray oppR(conPoint, r.getDirection()); //without refraction 
+		// Refraction - a map which has order so it can be used like a stack
+		if (!i.getMaterial().kt.iszero()) { 
+			bool tRefract = false;
+			ray oppositeRay(cp, r.getDirection()); //without refraction 
 			// marker to simulate a stack 
 			bool toAdd = false, toErase = false;
 
@@ -71,47 +68,47 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				double indexA, indexB;
 				// For ray go out of an object 
 				if (i.N*r.getDirection() > RAY_EPSILON) {
-					if (mediaHistory.empty())
+					if (indexstack.empty())
 						indexA = 1.0;
 					else
-						indexA = mediaHistory.rbegin()->second.index;// return the refractive index of last object 			
-					mediaHistory.erase(i.obj->getOrder());
+						indexA = indexstack.rbegin()->second.index;// return the refractive index of last object 			
+					indexstack.erase(i.obj->getOrder());
 					toAdd = true;
-					if (mediaHistory.empty())
+					if (indexstack.empty())
 						indexB = 1.0;
 					else
-						indexB = mediaHistory.rbegin()->second.index;
-					normal = -i.N;
+						indexB = indexstack.rbegin()->second.index;
+					n = -i.N;
 				}
 				// For ray get in the object 
 				else {
-					if (mediaHistory.empty())
+					if (indexstack.empty())
 						indexA = 1.0;
 					else
-						indexA = mediaHistory.rbegin()->second.index;
-					mediaHistory.insert(make_pair(i.obj->getOrder(), i.getMaterial()));
+						indexA = indexstack.rbegin()->second.index;
+					indexstack.insert(make_pair(i.obj->getOrder(), i.getMaterial()));
 					toErase = true;
-					indexB = mediaHistory.rbegin()->second.index;
-					normal = i.N;
+					indexB = indexstack.rbegin()->second.index;
+					n = i.N;
 				}
-				double indexRatio = indexA / indexB;
-				double cos_i = max(min(normal*((-r.getDirection()).normalize()), 1.0), -1.0); //SYSNOTE: min(x, 1.0) to prevent cos_i becomes bigger than 1 
+				double iRatio = indexA / indexB;
+				double cos_i = max(min(n*((-r.getDirection()).normalize()), 1.0), -1.0); //SYSNOTE: min(x, 1.0) to prevent cos_i becomes bigger than 1 
 				double sin_i = sqrt(1 - cos_i*cos_i);
-				double sin_t = sin_i * indexRatio;
+				double sin_t = sin_i * iRatio;
 				if (sin_t > 1.0)
-					TotalRefraction = true;
+					tRefract = true;
 				else {
-					TotalRefraction = false;
+					tRefract = false;
 					double cos_t = sqrt(1 - sin_t*sin_t);
-					vec3f Tdir = (indexRatio*cos_i - cos_t)*normal - indexRatio*-r.getDirection();
-					oppR = ray(conPoint, Tdir);
-					shade += prod(i.getMaterial().kt, traceRay(scene, oppR, thresh, depth + 1));
+					vec3f Tdir = (iRatio*cos_i - cos_t)*n - iRatio*-r.getDirection();
+					oppositeRay = ray(cp, Tdir);
+					shade += prod(i.getMaterial().kt, traceRay(scene, oppositeRay, thresh, depth + 1));
 				}
 			}
 			if (toAdd)
-				mediaHistory.insert(make_pair(i.obj->getOrder(), i.getMaterial()));
+				indexstack.insert(make_pair(i.obj->getOrder(), i.getMaterial()));
 			if (toErase)
-				mediaHistory.erase(i.obj->getOrder());
+				indexstack.erase(i.obj->getOrder());
 		}
 		shade = shade.clamp();
 		return shade;
